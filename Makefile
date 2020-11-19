@@ -35,6 +35,8 @@ all:
 	cp --force --recursive $(PWD)/build/usr/lib/x86_64-linux-gnu/opera/* $(PWD)/build/AppDir/opera
 	cp --force --recursive $(PWD)/AppDir/* $(PWD)/build/AppDir
 
+	glib-compile-schemas $(PWD)/build/AppDir/share/glib-2.0/schemas
+
 	rm -rf AppDir/opt
 
 	chmod +x $(PWD)/build/AppDir/AppRun
