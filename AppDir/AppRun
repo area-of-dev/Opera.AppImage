@@ -10,7 +10,9 @@
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-set -e
+UUC_VALUE=`cat /proc/sys/kernel/unprivileged_userns_clone 2> /dev/null`
+
+set -ex
 
 PATH=${PATH}:${APPDIR}/bin
 PATH=${PATH}:${APPDIR}/opera
@@ -26,4 +28,10 @@ export XDG_DATA_DIRS=${XDG_DATA_DIRS}
 
 cd ${OWD}
 
-exec ${APPDIR}/opera/opera "$@"
+if [ -z "${UUC_VALUE}" ]
+    then
+        exec ${APPDIR}/opera/opera --no-sandbox "$@"
+    else
+        exec ${APPDIR}/opera/opera "$@"
+    fi
+
