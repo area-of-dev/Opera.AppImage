@@ -11,38 +11,29 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 PWD:=$(shell pwd)
 
-all:
-	mkdir --parents $(PWD)/build
+all:  clean
+
+	mkdir --parents $(PWD)/build/Boilerplate.AppDir/opera	
+
+	apprepo --destination=$(PWD)/build appdir boilerplate libatk1.0-0 libglib2.0-0 shared-mime-info libffi7 libselinux1 libpango-1.0-0 \
+											libgdk-pixbuf2.0-0 librsvg2-2 adwaita-icon-theme libgtk-3-0 libncurses5 libncurses6 gsettings-desktop-schemas
+
 	wget --output-document="$(PWD)/build/build.deb" https://download1.operacdn.com/pub/opera/desktop/64.0.3417.92/linux/opera-stable_64.0.3417.92_amd64.deb
-	dpkg -x $(PWD)/build/build.deb $(PWD)/build	
+	dpkg -x $(PWD)/build/build.deb $(PWD)/build
 
-	wget --no-check-certificate --output-document=$(PWD)/build/build.rpm http://mirror.centos.org/centos/8/AppStream/x86_64/os/Packages/gtk3-3.22.30-5.el8.x86_64.rpm
-	cd $(PWD)/build && rpm2cpio $(PWD)/build/build.rpm | cpio -idmv && cd ..
+	echo "LD_LIBRARY_PATH=\$${LD_LIBRARY_PATH}:\$${APPDIR}/opera" >> $(PWD)/build/Boilerplate.AppDir/AppRun
+	echo "export LD_LIBRARY_PATH=\$${LD_LIBRARY_PATH}" >> $(PWD)/build/Boilerplate.AppDir/AppRun
+	echo "exec \$${APPDIR}/opera/opera \"\$${@}\"" >> $(PWD)/build/Boilerplate.AppDir/AppRun
 
-	wget --no-check-certificate --output-document=$(PWD)/build/build.rpm https://ftp.lysator.liu.se/pub/opensuse/distribution/leap/15.2/repo/oss/x86_64/libatk-1_0-0-2.34.1-lp152.1.7.x86_64.rpm
-	cd $(PWD)/build && rpm2cpio $(PWD)/build/build.rpm | cpio -idmv && cd ..
+	cp --force --recursive $(PWD)/build/usr/lib/x86_64-linux-gnu/opera/* $(PWD)/build/Boilerplate.AppDir/opera
+	
+	rm --force $(PWD)/build/Boilerplate.AppDir/*.desktop
 
-	wget --no-check-certificate --output-document=$(PWD)/build/build.rpm https://ftp.lysator.liu.se/pub/opensuse/distribution/leap/15.2/repo/oss/x86_64/libatk-bridge-2_0-0-2.34.1-lp152.1.5.x86_64.rpm
-	cd $(PWD)/build && rpm2cpio $(PWD)/build/build.rpm | cpio -idmv && cd ..
+	cp --force $(PWD)/AppDir/*.desktop $(PWD)/build/Boilerplate.AppDir/
+	cp --force $(PWD)/AppDir/*.png $(PWD)/build/Boilerplate.AppDir/ || true
+	cp --force $(PWD)/AppDir/*.svg $(PWD)/build/Boilerplate.AppDir/ || true
 
-	wget --no-check-certificate --output-document=$(PWD)/build/build.rpm https://ftp.lysator.liu.se/pub/opensuse/distribution/leap/15.2/repo/oss/x86_64/libatspi0-2.34.0-lp152.2.4.x86_64.rpm
-	cd $(PWD)/build && rpm2cpio $(PWD)/build/build.rpm | cpio -idmv && cd ..
-
-
-	mkdir --parents $(PWD)/build/AppDir
-	mkdir --parents $(PWD)/build/AppDir/opera	
-	cp --force --recursive $(PWD)/build/usr/* $(PWD)/build/AppDir/
-	cp --force --recursive $(PWD)/build/usr/lib/x86_64-linux-gnu/opera/* $(PWD)/build/AppDir/opera
-	cp --force --recursive $(PWD)/AppDir/* $(PWD)/build/AppDir
-
-	glib-compile-schemas $(PWD)/build/AppDir/share/glib-2.0/schemas
-
-	rm -rf AppDir/opt
-
-	chmod +x $(PWD)/build/AppDir/AppRun
-	chmod +x $(PWD)/build/AppDir/*.desktop
-
-	export ARCH=x86_64 && $(PWD)/bin/appimagetool.AppImage $(PWD)/build/AppDir $(PWD)/Opera.AppImage
+	export ARCH=x86_64 && $(PWD)/bin/appimagetool.AppImage $(PWD)/build/Boilerplate.AppDir $(PWD)/Opera.AppImage
 	chmod +x $(PWD)/Opera.AppImage
 
 clean:
