@@ -14,9 +14,7 @@ PWD:=$(shell pwd)
 all:  clean
 
 	mkdir --parents $(PWD)/build/Boilerplate.AppDir/opera	
-
-	apprepo --destination=$(PWD)/build appdir boilerplate libatk1.0-0 libglib2.0-0 shared-mime-info libffi7 libselinux1 libpango-1.0-0 \
-											libgdk-pixbuf2.0-0 librsvg2-2 adwaita-icon-theme libgtk-3-0 libncurses5 libncurses6 gsettings-desktop-schemas
+	apprepo --destination=$(PWD)/build appdir boilerplate libatk1.0-0 libatk-bridge2.0-0 libgtk-3-0
 
 	wget --output-document="$(PWD)/build/build.deb" https://download1.operacdn.com/pub/opera/desktop/64.0.3417.92/linux/opera-stable_64.0.3417.92_amd64.deb
 	dpkg -x $(PWD)/build/build.deb $(PWD)/build
