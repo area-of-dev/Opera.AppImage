@@ -14,9 +14,9 @@ Actions=new-window;new-private-window;
 [Desktop Action new-window]
 Name=New Window
 Exec=AppRun --new-window
-TargetEnvironment=Unity
+X-TargetEnvironment=Unity
 
 [Desktop Action new-private-window]
 Name=New Private Window
 Exec=AppRun --incognito
-TargetEnvironment=Unity
+X-TargetEnvironment=Unity
